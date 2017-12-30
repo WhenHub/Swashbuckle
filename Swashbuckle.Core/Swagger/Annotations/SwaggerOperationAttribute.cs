@@ -16,5 +16,6 @@ namespace Swashbuckle.Swagger.Annotations
         public string[] Tags { get; set; }
 
         public string[] Schemes { get; set; }
+        public string Summary { get; set; }
     }
 }

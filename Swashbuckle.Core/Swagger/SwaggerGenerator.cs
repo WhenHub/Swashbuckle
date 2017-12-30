@@ -4,6 +4,7 @@ using System.Web.Http.Description;
 using System;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Web.Http;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Swashbuckle.Swagger
@@ -65,7 +66,7 @@ namespace Swashbuckle.Swagger
                 securityDefinitions = _options.SecurityDefinitions
             };
 
-            foreach(var filter in _options.DocumentFilters)
+            foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, schemaRegistry, _apiExplorer);
             }
@@ -140,6 +141,8 @@ namespace Swashbuckle.Swagger
                     })
                  .ToList();
 
+            var description = apiDesc.ActionDescriptor.GetCustomAttributes<SwaggerDescriptionAttribute>().FirstOrDefault();
+            
             var responses = new Dictionary<string, Response>();
             var responseType = apiDesc.ResponseType();
             if (responseType == null || responseType == typeof(void))
@@ -155,7 +158,11 @@ namespace Swashbuckle.Swagger
                 consumes = apiDesc.Consumes().ToList(),
                 parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
                 responses = responses,
-                deprecated = apiDesc.IsObsolete() ? true : (bool?) null
+                deprecated = apiDesc.IsObsolete() ? true : (bool?)null,
+                summary = description?.Summary,
+                description = description?.Description
+
+
             };
 
             foreach (var filter in _options.OperationFilters)
@@ -189,7 +196,7 @@ namespace Swashbuckle.Swagger
             {
                 parameter.type = "string";
                 parameter.required = true;
-                return parameter; 
+                return parameter;
             }
 
             parameter.required = location == "path" || !paramDesc.ParameterDescriptor.IsOptional;

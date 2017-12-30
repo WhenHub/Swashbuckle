@@ -19,6 +19,9 @@ namespace Swashbuckle.Swagger.Annotations
 
             if (attribute.Schemes != null)
                 operation.schemes = attribute.Schemes;
+
+            if (attribute.Summary != null)
+                operation.summary = attribute.Summary;
         }
     }
 }
